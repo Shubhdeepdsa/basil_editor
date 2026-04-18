@@ -145,6 +145,10 @@ final class MarkdownEditorCoordinator: NSObject, NSTextViewDelegate, MarkdownEdi
         MarkdownEditorThemeResolver(theme: configuration.theme)
     }
 
+    private var paragraphNormalizer: MarkdownEditorParagraphNormalizer {
+        MarkdownEditorParagraphNormalizer(configuration: configuration)
+    }
+
     private func applyVisualConfiguration(to textView: MarkdownEditorTextView, in _: NSScrollView) {
         textView.theme = configuration.theme
         textView.backgroundColor = configuration.theme.editorBackgroundColor
@@ -261,7 +265,7 @@ final class MarkdownEditorCoordinator: NSObject, NSTextViewDelegate, MarkdownEdi
         let contentRange = contentRange(for: currentParagraphRange, in: string)
         let text = string.substring(with: contentRange)
         let existingBlock = blockForParagraph(at: currentParagraphRange.location, in: textStorage)
-        let target = normalizedParagraphTarget(for: text, existingBlock: existingBlock)
+        let target = paragraphNormalizer.normalizedTarget(for: text, existingBlock: existingBlock)
 
         if text != target.text {
             textStorage.replaceCharacters(in: contentRange, with: target.text)
@@ -273,43 +277,6 @@ final class MarkdownEditorCoordinator: NSObject, NSTextViewDelegate, MarkdownEdi
 
         applyBlock(target.block, to: updatedRange, in: textStorage)
         return NSMaxRange(updatedRange)
-    }
-
-    private func normalizedParagraphTarget(
-        for text: String,
-        existingBlock: MarkdownEditorBlock
-    ) -> NormalizedParagraphTarget {
-        if configuration.behavior.enablesDividers,
-           text == "---" || (existingBlock == .divider && text == MarkdownEditorThemeResolver.dividerPlaceholder) {
-            return NormalizedParagraphTarget(
-                text: MarkdownEditorThemeResolver.dividerPlaceholder,
-                block: .divider
-            )
-        }
-
-        if let level = headingLevel(for: text) {
-            let triggerLength = level.rawValue + 1
-            let start = text.index(text.startIndex, offsetBy: triggerLength)
-            return NormalizedParagraphTarget(
-                text: String(text[start...]),
-                block: .heading(level: level)
-            )
-        }
-
-        if configuration.behavior.enablesBullets, text.hasPrefix("- ") {
-            let start = text.index(text.startIndex, offsetBy: 2)
-            return NormalizedParagraphTarget(
-                text: MarkdownEditorThemeResolver.bulletPrefix + text[start...],
-                block: .bullet
-            )
-        }
-
-        switch existingBlock {
-        case .heading, .bullet, .divider:
-            return NormalizedParagraphTarget(text: text, block: existingBlock)
-        case .paragraph:
-            return NormalizedParagraphTarget(text: text, block: .paragraph)
-        }
     }
 
     private func contentRange(for paragraphRange: NSRange, in string: NSString) -> NSRange {
@@ -332,7 +299,7 @@ final class MarkdownEditorCoordinator: NSObject, NSTextViewDelegate, MarkdownEdi
             return
         }
 
-        if let level = headingLevel(for: context.text) {
+        if let level = paragraphNormalizer.headingLevel(for: context.text) {
             convertToHeading(level: level, context: context, in: textView)
             return
         }
@@ -352,7 +319,7 @@ final class MarkdownEditorCoordinator: NSObject, NSTextViewDelegate, MarkdownEdi
         }
 
         let triggerLength = level.rawValue + 1
-        let selectionAfterRemoval = adjustedSelectionAfterRemovingPrefix(
+        let selectionAfterRemoval = MarkdownEditorSelectionAdjuster.afterRemovingPrefix(
             selection: textView.selectedRange(),
             prefixLength: triggerLength,
             at: context.paragraphRange.location
@@ -394,7 +361,7 @@ final class MarkdownEditorCoordinator: NSObject, NSTextViewDelegate, MarkdownEdi
         }
 
         let replacement = MarkdownEditorThemeResolver.bulletPrefix
-        let selectionAfterReplacement = adjustedSelectionForReplacement(
+        let selectionAfterReplacement = MarkdownEditorSelectionAdjuster.forReplacement(
             selection: textView.selectedRange(),
             replacedRange: NSRange(location: context.paragraphRange.location, length: 2),
             replacementLength: replacement.utf16.count
@@ -467,7 +434,7 @@ final class MarkdownEditorCoordinator: NSObject, NSTextViewDelegate, MarkdownEdi
             return false
         }
 
-        let bulletContent = bulletContentText(from: context.text)
+        let bulletContent = paragraphNormalizer.bulletContentText(from: context.text)
 
         if bulletContent.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
            configuration.behavior.exitsBulletOnReturnWhenEmpty {
@@ -600,7 +567,7 @@ final class MarkdownEditorCoordinator: NSObject, NSTextViewDelegate, MarkdownEdi
         guard
             let context = paragraphContextAroundSelection(in: textView),
             context.block == .bullet,
-            bulletContentText(from: context.text).trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+            paragraphNormalizer.bulletContentText(from: context.text).trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
             textView.selectedRange().location == context.paragraphRange.location + MarkdownEditorThemeResolver.bulletPrefix.utf16.count,
             let textStorage = textView.textStorage
         else {
@@ -649,19 +616,6 @@ final class MarkdownEditorCoordinator: NSObject, NSTextViewDelegate, MarkdownEdi
         }
 
         return paragraphContextAroundSelection(in: textView)?.block ?? .paragraph
-    }
-
-    private func headingLevel(for text: String) -> MarkdownEditorHeadingLevel? {
-        let triggers: [(String, MarkdownEditorHeadingLevel)] = [
-            ("#### ", .h4),
-            ("### ", .h3),
-            ("## ", .h2),
-            ("# ", .h1)
-        ]
-
-        return triggers.first {
-            configuration.behavior.enabledHeadingLevels.contains($0.1) && text.hasPrefix($0.0)
-        }?.1
     }
 
     private func applyBlock(_ block: MarkdownEditorBlock, to range: NSRange, in textStorage: NSTextStorage) {
@@ -721,45 +675,6 @@ final class MarkdownEditorCoordinator: NSObject, NSTextViewDelegate, MarkdownEdi
         )
     }
 
-    private func bulletContentText(from text: String) -> String {
-        guard text.hasPrefix(MarkdownEditorThemeResolver.bulletPrefix) else {
-            return text
-        }
-
-        let start = text.index(text.startIndex, offsetBy: MarkdownEditorThemeResolver.bulletPrefix.count)
-        return String(text[start...])
-    }
-
-    private func adjustedSelectionAfterRemovingPrefix(
-        selection: NSRange,
-        prefixLength: Int,
-        at paragraphStart: Int
-    ) -> NSRange {
-        let location: Int
-
-        if selection.location <= paragraphStart + prefixLength {
-            location = paragraphStart
-        } else {
-            location = selection.location - prefixLength
-        }
-
-        return NSRange(location: location, length: selection.length)
-    }
-
-    private func adjustedSelectionForReplacement(
-        selection: NSRange,
-        replacedRange: NSRange,
-        replacementLength: Int
-    ) -> NSRange {
-        let delta = replacementLength - replacedRange.length
-
-        if selection.location <= replacedRange.location {
-            return selection
-        }
-
-        return NSRange(location: selection.location + delta, length: selection.length)
-    }
-
     private func hasEmptyTrailingParagraph(in textView: NSTextView) -> Bool {
         let text = textView.string
         return text.isEmpty || text.hasSuffix("\n")
@@ -786,9 +701,4 @@ private struct ParagraphContext {
     let text: String
     let block: MarkdownEditorBlock
     let endsAtDocumentEnd: Bool
-}
-
-private struct NormalizedParagraphTarget {
-    let text: String
-    let block: MarkdownEditorBlock
 }

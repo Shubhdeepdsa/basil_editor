@@ -16,6 +16,10 @@ let package = Package(
     targets: [
         .target(
             name: "EditorLab"
+        ),
+        .testTarget(
+            name: "EditorLabTests",
+            dependencies: ["EditorLab"]
         )
     ]
 )
