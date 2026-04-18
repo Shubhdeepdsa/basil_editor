@@ -1,5 +1,6 @@
 import AppKit
 
+/// Supported heading levels for live markdown-style heading conversion.
 public enum MarkdownEditorHeadingLevel: Int, CaseIterable, Hashable {
     case h1 = 1
     case h2 = 2
@@ -7,6 +8,7 @@ public enum MarkdownEditorHeadingLevel: Int, CaseIterable, Hashable {
     case h4 = 4
 }
 
+/// A text style applied to a specific block type inside the editor.
 public struct MarkdownEditorTextStyle: Equatable {
     public var font: NSFont
     public var textColor: NSColor
@@ -37,6 +39,7 @@ public struct MarkdownEditorTextStyle: Equatable {
     }
 }
 
+/// Visual configuration for the editor surface and supported block types.
 public struct MarkdownEditorTheme: Equatable {
     public var bodyStyle: MarkdownEditorTextStyle
     public var heading1Style: MarkdownEditorTextStyle
@@ -158,6 +161,7 @@ public struct MarkdownEditorTheme: Equatable {
     }
 }
 
+/// Behavior switches for live paragraph conversion and editing edge cases.
 public struct MarkdownEditorBehavior: Equatable {
     public var enabledHeadingLevels: Set<MarkdownEditorHeadingLevel>
     public var enablesBullets: Bool
@@ -180,6 +184,10 @@ public struct MarkdownEditorBehavior: Equatable {
     }
 }
 
+/// Root configuration type for the editor.
+///
+/// Use this to provide visual theme values and enable or disable supported
+/// live markdown-style behaviors.
 public struct MarkdownEditorConfiguration: Equatable {
     public var theme: MarkdownEditorTheme
     public var behavior: MarkdownEditorBehavior
