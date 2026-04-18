@@ -1,8 +1,8 @@
 import AppKit
 
-enum EditorBlock: Equatable {
+enum MarkdownEditorBlock: Equatable {
     case paragraph
-    case heading(level: Int)
+    case heading(level: MarkdownEditorHeadingLevel)
     case bullet
     case divider
 
@@ -11,7 +11,7 @@ enum EditorBlock: Equatable {
         case .paragraph:
             return "paragraph"
         case .heading(let level):
-            return "heading:\(level)"
+            return "heading:\(level.rawValue)"
         case .bullet:
             return "bullet"
         case .divider:
@@ -33,7 +33,10 @@ enum EditorBlock: Equatable {
             }
 
             let suffix = storageValue.replacingOccurrences(of: "heading:", with: "")
-            guard let level = Int(suffix), (1 ... 4).contains(level) else {
+            guard
+                let rawValue = Int(suffix),
+                let level = MarkdownEditorHeadingLevel(rawValue: rawValue)
+            else {
                 return nil
             }
 
@@ -43,5 +46,5 @@ enum EditorBlock: Equatable {
 }
 
 extension NSAttributedString.Key {
-    static let editorBlock = NSAttributedString.Key("EditorLabBlock")
+    static let markdownEditorBlock = NSAttributedString.Key("EditorLabBlock")
 }
