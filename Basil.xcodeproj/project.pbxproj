@@ -338,7 +338,7 @@
 /* Begin XCLocalSwiftPackageReference section */
 		A1B2C3D52FD1000000000001 /* XCLocalSwiftPackageReference "EditorLab" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = EditorLab;
+			relativePath = ../EditorLab;
 		};
 /* End XCLocalSwiftPackageReference section */
 
