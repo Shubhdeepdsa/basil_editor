@@ -40,7 +40,9 @@ In other words:
 - SwiftUI embedding API
 - package tests and package CI
 
-Install and package documentation now belong in the `EditorLab` repository.
+Package source and documentation live at:
+
+- https://github.com/Shubhdeepdsa/EditorLab
 
 ## Example Host Styling
 
@@ -62,24 +64,3 @@ ZStack {
     .padding(24)
 }
 ```
-
-## Release Notes For Consumers
-
-Before calling this a stable public package, the next release-quality steps are:
-
-1. move `EditorLab` into its own repository
-2. add semantic version tags
-3. add CI build validation on a macOS runner
-4. add package-level tests for paragraph transforms
-5. document versioned release notes
-
-## Documentation
-
-- [Installation guide](docs/installation.md)
-- [Configuration guide](docs/configuration.md)
-- [Behavior reference](docs/behavior.md)
-- [Release guide](docs/releasing.md)
-
-## License
-
-No license file is included yet. Add one before publishing the package publicly.
