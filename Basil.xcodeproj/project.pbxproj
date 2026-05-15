@@ -7,11 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A1B2C3D42FD1000000000001 /* EditorLab in Frameworks */ = {isa = PBXBuildFile; productRef = A1B2C3D62FD1000000000001 /* EditorLab */; };
+		A1B2C3D72FD1000000000001 /* WebEditor in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D82FD1000000000001 /* WebEditor */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		1302E5682F92946C00792C91 /* Basil.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Basil.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1B2C3D82FD1000000000001 /* WebEditor */ = {isa = PBXFileReference; lastKnownFileType = folder; name = WebEditor; path = Basil/WebEditor; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -27,7 +28,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A1B2C3D42FD1000000000001 /* EditorLab in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -37,6 +37,7 @@
 		1302E55F2F92946C00792C91 = {
 			isa = PBXGroup;
 			children = (
+				A1B2C3D82FD1000000000001 /* WebEditor */,
 				1302E56A2F92946C00792C91 /* Basil */,
 				1302E5692F92946C00792C91 /* Products */,
 			);
@@ -70,7 +71,6 @@
 			);
 			name = Basil;
 			packageProductDependencies = (
-				A1B2C3D62FD1000000000001 /* EditorLab */,
 			);
 			productName = Basil;
 			productReference = 1302E5682F92946C00792C91 /* Basil.app */;
@@ -99,10 +99,9 @@
 				Base,
 			);
 			mainGroup = 1302E55F2F92946C00792C91;
-			packageReferences = (
-				A1B2C3D52FD1000000000001 /* XCLocalSwiftPackageReference "EditorLab" */,
-			);
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 1302E5692F92946C00792C91 /* Products */;
 			projectDirPath = "";
@@ -118,6 +117,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A1B2C3D72FD1000000000001 /* WebEditor in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -257,6 +257,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Basil/Basil.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -287,6 +288,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Basil/Basil.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -334,21 +336,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCLocalSwiftPackageReference section */
-		A1B2C3D52FD1000000000001 /* XCLocalSwiftPackageReference "EditorLab" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../EditorLab;
-		};
-/* End XCLocalSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		A1B2C3D62FD1000000000001 /* EditorLab */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = A1B2C3D52FD1000000000001 /* XCLocalSwiftPackageReference "EditorLab" */;
-			productName = EditorLab;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 1302E5602F92946C00792C91 /* Project object */;
 }
