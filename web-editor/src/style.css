@@ -1,156 +1,144 @@
 html, body {
     margin: 0;
     padding: 0;
-    height: 100%;
+    min-height: 100%;
     background-color: transparent;
 }
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    color: #000;
-}
-
-@media (prefers-color-scheme: dark) {
-    body {
-        color: #fff;
-    }
+    color: #1F1F1C;
+    overflow-x: hidden;
 }
 
 #editor {
-    height: 100%;
+    min-height: 100%;
+    cursor: text;
 }
 
 .ProseMirror {
     outline: none;
-    height: 100%;
-    padding: 28px 26px;
+    min-height: 100%;
+    padding: 0 28px 40px 28px; /* Zero top padding */
+    font-family: "New York", "Georgia", serif;
     font-size: 17px;
-    line-height: 1.6;
+    line-height: 1.4;
+    color: #1F1F1C;
     box-sizing: border-box;
+    white-space: pre-wrap;
+}
+
+/* Custom Minimal Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+    background: rgba(138, 133, 125, 0.2);
+    border-radius: 10px;
+}
+
+/* Editorial Typography */
+.ProseMirror h1 {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    margin: 20px 0 8px 0;
+    color: #1F1F1C;
+    letter-spacing: -0.02em;
+}
+
+.ProseMirror h2 {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 21px;
+    font-weight: 600;
+    margin: 16px 0 6px 0;
+    color: #1F1F1C;
+    letter-spacing: -0.01em;
+}
+
+.ProseMirror h3 {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    margin: 12px 0 4px 0;
+    color: #8A857D;
 }
 
 .ProseMirror p {
-    margin-top: 0;
-    margin-bottom: 10px;
+    margin: 0; /* NO MARGIN for paragraphs to fix the line-gap issue */
 }
 
-.ProseMirror h1 { font-size: 30px; margin: 18px 0 14px 0; }
-.ProseMirror h2 { font-size: 25px; margin: 16px 0 13px 0; }
-.ProseMirror h3 { font-size: 21px; margin: 14px 0 12px 0; }
+/* Placeholder */
+.ProseMirror p.is-editor-empty:first-child::before {
+    content: attr(data-placeholder);
+    float: left;
+    color: #BAB6AE;
+    pointer-events: none;
+    height: 0;
+}
 
-/* Code Block Styling */
+/* Code Blocks */
 .code-block-wrapper {
     position: relative;
-    margin: 1.5rem 0;
+    margin: 1rem 0;
 }
 
 .code-block-wrapper pre {
-    background: #0d1117;
-    color: #c9d1d9;
-    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
-    font-size: 14px;
-    padding: 2.5rem 1rem 1rem 1rem; /* Extra top padding for button */
+    background: #1A1B1E;
+    color: #E3E6ED;
+    font-family: 'SFMono-Regular', Consolas, monospace;
+    font-size: 13px;
+    padding: 2.5rem 1rem 1rem 1rem;
     border-radius: 12px;
     overflow-x: auto;
     margin: 0;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.1);
     line-height: 1.5;
-}
-
-.code-block-wrapper code {
-    background: none;
-    color: inherit;
-    padding: 0;
-    font-family: inherit;
-    font-size: inherit;
 }
 
 .copy-button {
     position: absolute;
     top: 0.6rem;
     right: 0.6rem;
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.08);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    color: #8b949e;
-    padding: 4px 10px;
+    color: #A9ADC1;
+    padding: 3px 10px;
     border-radius: 6px;
-    font-size: 11px;
-    font-family: -apple-system, sans-serif;
+    font-size: 10px;
     cursor: pointer;
-    transition: all 0.2s;
-    user-select: none;
-    z-index: 10;
+    transition: opacity 0.2s;
+    opacity: 0;
 }
 
-.copy-button:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: #fff;
-    border-color: rgba(255, 255, 255, 0.3);
+.code-block-wrapper:hover .copy-button { opacity: 1; }
+
+/* Bubble Menu */
+.bubble-menu {
+    display: flex;
+    background-color: rgba(31, 31, 28, 0.98);
+    backdrop-filter: blur(8px);
+    padding: 4px;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    gap: 2px;
 }
 
-.copy-button:active {
-    transform: translateY(1px);
+.bubble-menu button {
+    background: transparent;
+    border: none;
+    color: #BAB6AE;
+    padding: 5px 8px;
+    border-radius: 5px;
+    font-size: 11px;
+    cursor: pointer;
 }
 
-/* Syntax Highlighting (GitHub Dark style) */
-.hljs-comment,
-.hljs-punctuation {
-  color: #8b949e;
-}
+.bubble-menu button.is-active { color: #FFF; background: rgba(255,255,255,0.1); }
 
-.hljs-attr,
-.hljs-attribute,
-.hljs-meta,
-.hljs-selector-attr,
-.hljs-selector-id,
-.hljs-selector-class {
-  color: #79c0ff;
-}
-
-.hljs-variable,
-.hljs-template-variable,
-.hljs-tag,
-.hljs-name {
-  color: #7ee787;
-}
-
-.hljs-string,
-.hljs-doctag,
-.hljs-regexp {
-  color: #a5d6ff;
-}
-
-.hljs-title,
-.hljs-title.class_,
-.hljs-title.function_,
-.hljs-section {
-  color: #d2a8ff;
-}
-
-.hljs-keyword,
-.hljs-selector-tag {
-  color: #ff7b72;
-}
-
-.hljs-number,
-.hljs-literal,
-.hljs-type,
-.hljs-built_in,
-.hljs-builtin-name,
-.hljs-link {
-  color: #ffa657;
-}
-
-.hljs-operator,
-.hljs-params,
-.hljs-property {
-  color: #c9d1d9;
-}
-
-.hljs-emphasis {
-  font-style: italic;
-}
-
-.hljs-strong {
-  font-weight: bold;
-}
+/* Lists & Quotes */
+.ProseMirror ul, .ProseMirror ol { padding-left: 1.2rem; margin: 0.8rem 0; }
+.ProseMirror blockquote { border-left: 3px solid #EAE7DF; padding-left: 1rem; font-style: italic; color: #8A857D; margin: 1rem 0; }
+.ProseMirror hr { border: none; border-top: 1px solid #EAE7DF; margin: 2rem 0; }

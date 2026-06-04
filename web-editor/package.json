@@ -18,7 +18,11 @@
     "vite-plugin-singlefile": "^2.3.3"
   },
   "dependencies": {
+    "@tiptap/extension-bubble-menu": "^3.23.4",
     "@tiptap/extension-code-block-lowlight": "^3.23.4",
-    "lowlight": "^3.3.0"
+    "@tiptap/extension-placeholder": "^3.23.4",
+    "@tiptap/markdown": "^3.23.4",
+    "lowlight": "^3.3.0",
+    "tippy.js": "^6.3.7"
   }
 }
